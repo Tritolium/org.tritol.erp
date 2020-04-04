@@ -1,7 +1,13 @@
 package org.tritol.erp.data;
 
-public class Article {
+import java.io.Serializable;
+
+public class Article implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6752638419857269647L;
 	private String pos_nr;
 	private String art_desc;
 	private int quantity;

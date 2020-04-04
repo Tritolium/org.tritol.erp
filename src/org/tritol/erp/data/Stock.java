@@ -1,7 +1,13 @@
 package org.tritol.erp.data;
 
-public class Stock {
+import java.io.Serializable;
+
+public class Stock implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4444052758446813007L;
 	private String pos_nr;
 	private String description;
 	private int quantity;

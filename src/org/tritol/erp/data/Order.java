@@ -1,10 +1,15 @@
 package org.tritol.erp.data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 
-public class Order {
+public class Order implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2908069555472463715L;
 	private int order_nr;
 	private LocalDate order_date;
 	private LocalDate payment_date;

@@ -1,10 +1,21 @@
 package org.tritol.erp.data;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 
-public class DataController {
+public class DataController implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5261603145067251997L;
+
 	private static DataController instance;
 	
 	private HashSet<Order> order_list;
@@ -19,9 +30,38 @@ public class DataController {
 	
 	public static DataController getInstance() {
 		if(instance == null) {
+			//try to deserialize
+			FileInputStream fis;
+			ObjectInputStream ois;
+			try {
+				fis = new FileInputStream("./database.ser");
+				ois = new ObjectInputStream(fis);
+				instance = (DataController) ois.readObject();
+				ois.close();
+				fis.close();
+			} catch (IOException | ClassNotFoundException e) {
+				instance = new DataController();
+				System.err.println("failed to deserialize. Created new instance");
+			}
+			
+		
 			instance = new DataController();
 		}
 		return instance;
+	}
+	
+	public static void saveInstance() {
+		FileOutputStream fos;
+		ObjectOutputStream oos;
+		try {
+			fos = new FileOutputStream("./database.ser");
+			oos = new ObjectOutputStream(fos);
+			oos.writeObject(getInstance());
+			oos.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void addOrder(int order_nr, LocalDate order_date) {

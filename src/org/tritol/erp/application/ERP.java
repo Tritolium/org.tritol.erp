@@ -14,6 +14,8 @@ public class ERP {
 		Controller.addToOrder(40035275, "1311", "Kitzinger Weinhefe trocken Neutral Universal 5g", 1, 2.25d);
 		
 		Controller.setOrderState(40035275, OrderState.ARRIVED);
+		
+		Controller.safeState();
 	}
 
 }

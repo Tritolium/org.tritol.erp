@@ -25,4 +25,8 @@ public class Controller {
 	public static void addConsumption(LocalDate con_date, String usage) {
 		DataController.getInstance().addConsumption(con_date, usage);
 	}
+	
+	public static void safeState() {
+		DataController.saveInstance();
+	}
 }
