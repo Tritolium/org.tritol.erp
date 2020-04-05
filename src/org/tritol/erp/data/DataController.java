@@ -42,17 +42,27 @@ public class DataController implements Serializable{
 
 	public void addOrder(int order_nr, LocalDate order_date) {
 		order_list.add(new Order(order_nr, order_date));
+		DataAccess.addOrder(order_nr, order_date);
 	}
 
 	public void addToOrder(int order_nr, String pos_nr, String art_desc, int quantity, double price) {
 		getOrder(order_nr).add(new Article(pos_nr, art_desc, quantity, price));
+		DataAccess.addToOrder(order_nr, pos_nr, art_desc, quantity, price);
+	}
+	
+	public void setArrivalDate(int order_nr, LocalDate arrival) {
+		getOrder(order_nr).setArrivalDate(arrival);
+		DataAccess.setArrivalDate(order_nr, arrival);
 	}
 	
 	public void setOrderState(int order_nr, OrderState state) {
 		getOrder(order_nr).setState(state);
+		DataAccess.setOrderState(order_nr, state);
+		
 	}
 	
 	private void addToStock(String pos_nr, int quantity) throws ArticleNotRegisteredException {
+		DataAccess.addToStock(pos_nr, quantity);
 		Stock s = getStock(pos_nr);
 		if(s!=null) {
 			s.setQuantity(s.getQuantity()+quantity);
@@ -62,6 +72,7 @@ public class DataController implements Serializable{
 	}
 	
 	public void addOrderToStock(int order_nr) {
+		DataAccess.addOrderToStock(order_nr);		
 		Order order = getOrder(order_nr);
 		for(Article a : order.getArticleList()) {
 			try {
@@ -76,7 +87,8 @@ public class DataController implements Serializable{
 		stock_list.add(new Stock(pos_nr, art_desc, quantity));
 	}
 	
-	public void addConsumption(LocalDate con_date, String usage) {
+	public void addConsumption(int con_nr, LocalDate con_date, String usage) {
+		DataAccess.addConsumption(con_nr, con_date, usage);
 		con_list.add(new Consumption(con_date, usage));
 	}
 	
