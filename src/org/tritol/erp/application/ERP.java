@@ -16,7 +16,6 @@ public class ERP {
 
 			Controller.setOrderState(i, OrderState.ARRIVED);
 		}
-		Controller.safeState();
 	}
 
 }

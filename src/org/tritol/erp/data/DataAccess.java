@@ -1,12 +1,7 @@
 package org.tritol.erp.data;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -24,10 +19,6 @@ public class DataAccess {
 	 * URL to the database
 	 */
 	private static final String database = "jdbc:sqlite:database.sqlite";
-	/**
-	 * URL to serialized DataController instance
-	 */
-	private static final String ser_database ="./database.ser";
 
 	public static void connect() {
 		
@@ -117,40 +108,6 @@ public class DataAccess {
 		} catch (SQLException e) {
 			System.err.println("Unable to disconnect");
 		}
-	}
-	
-	public static void serialize(DataController instance) {
-		FileOutputStream fos;
-		ObjectOutputStream oos;
-		try {
-			fos = new FileOutputStream(ser_database);
-			oos = new ObjectOutputStream(fos);
-			oos.writeObject(instance);
-			oos.close();
-			fos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static DataController deserialize() {
-		FileInputStream fis;
-		ObjectInputStream ois;
-		DataController instance = null;
-		
-		try {
-			fis = new FileInputStream(ser_database);
-			ois = new ObjectInputStream(fis);
-			instance = (DataController) ois.readObject();
-			ois.close();
-			fis.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("Could not load database");
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return instance;
 	}
 	
 	public static void addConsumption(int con_nr, LocalDate con_date, String usage) {
