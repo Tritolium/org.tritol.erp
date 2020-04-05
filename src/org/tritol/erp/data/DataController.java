@@ -51,6 +51,7 @@ public class DataController implements Serializable{
 	}
 	
 	public static void saveInstance() {
+		DataAccess.connect();
 		FileOutputStream fos;
 		ObjectOutputStream oos;
 		try {
@@ -62,6 +63,7 @@ public class DataController implements Serializable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		DataAccess.disconnect();
 	}
 
 	public void addOrder(int order_nr, LocalDate order_date) {
