@@ -1,7 +1,11 @@
 /bin/
 
+<<<<<<< HEAD
 <<<<<<< Upstream, based on origin/master
 =======
 database.ser
 >>>>>>> 2ae1c91 Adding SQL access
+=======
+database.ser
+>>>>>>> branch 'testing' of https://github.com/Tritolium/org.tritol.erp.git
 database.sqlite
