@@ -18,12 +18,13 @@ public class Controller {
 	public static void setOrderState(int order_nr, OrderState state) {
 		DataController.getInstance().setOrderState(order_nr, state);
 		if(state == OrderState.ARRIVED) {
+			DataController.getInstance().setArrivalDate(order_nr, LocalDate.now());
 			DataController.getInstance().addOrderToStock(order_nr);
 		}
 	}
 	
-	public static void addConsumption(LocalDate con_date, String usage) {
-		DataController.getInstance().addConsumption(con_date, usage);
+	public static void addConsumption(int con_nr, LocalDate con_date, String usage) {
+		DataController.getInstance().addConsumption(con_nr, con_date, usage);
 	}
 	
 	public static void safeState() {

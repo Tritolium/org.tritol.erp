@@ -46,16 +46,13 @@ public class Order implements Serializable{
 	public HashSet<Article> getArticleList(){
 		return art_list;
 	}
+	
+	public void setArrivalDate(LocalDate arrival) {
+		this.arrival_date = arrival;
+	}
 
 	public void setState(OrderState state) {
 		this.state = state;
-		switch (state) {
-		case ARRIVED:
-			arrival_date = LocalDate.now();
-			break;
-		default:
-			break;
-		}
 	}
 
 	public void add(Article article) {
