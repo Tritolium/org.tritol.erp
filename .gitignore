@@ -1,3 +1,7 @@
 /bin/
 
+<<<<<<< Upstream, based on origin/master
+=======
+database.ser
+>>>>>>> 2ae1c91 Adding SQL access
 database.sqlite
