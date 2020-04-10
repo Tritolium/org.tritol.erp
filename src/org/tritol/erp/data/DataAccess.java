@@ -18,9 +18,13 @@ public class DataAccess {
 	/**
 	 * URL to the database
 	 */
-	private static final String database = "jdbc:sqlite:database.sqlite";
+	private final String database = "jdbc:sqlite:database.sqlite";
 
-	public static void connect() {
+	public DataAccess() {
+		connect();
+	}
+	
+	public void connect() {
 		
 		File d_file = new File("database.sqlite");
 		
@@ -52,7 +56,7 @@ public class DataAccess {
 		}
 	}
 	
-	private static void initDatabase() {
+	private void initDatabase() {
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(
@@ -100,7 +104,7 @@ public class DataAccess {
 		}		
 	}
 
-	public static void disconnect() {
+	public void disconnect() {
 		try {
 			if(connection != null) {
 				connection.close();
@@ -110,7 +114,7 @@ public class DataAccess {
 		}
 	}
 	
-	public static void addConsumption(int con_nr, LocalDate con_date, String usage) {
+	public void addConsumption(int con_nr, LocalDate con_date, String usage) {
 		PreparedStatement prep_statement;
 		try {
 			prep_statement = connection.prepareStatement("INSERT INTO consumption (con_nr, con_date, usage) VALUES (?, ?, ?)");
@@ -123,7 +127,7 @@ public class DataAccess {
 		}
 	}
 
-	public static void addOrder(int order_nr, LocalDate order_date) {
+	public void addOrder(int order_nr, LocalDate order_date) {
 		PreparedStatement prep_statement;
 		if(connection != null) {
 			try {
@@ -140,7 +144,7 @@ public class DataAccess {
 		}
 	}
 	
-	public static void addToOrder(int order_nr, String pos_nr, String art_desc, int quantity, double price) {
+	public void addToOrder(int order_nr, String pos_nr, String art_desc, int quantity, double price) {
 		PreparedStatement prep_statement;
 		if(connection != null) {
 			try {
@@ -160,7 +164,7 @@ public class DataAccess {
 		}
 	}
 	
-	public static void addToStock(String pos_nr, int quantity) throws ArticleNotRegisteredException {
+	public void addToStock(String pos_nr, int quantity) throws ArticleNotRegisteredException {
 		PreparedStatement prep_statement;
 		ResultSet resSet;
 		int stock_quantity;
@@ -169,7 +173,7 @@ public class DataAccess {
 			prep_statement = connection.prepareStatement("SELECT pos_nr FROM stock WHERE pos_nr = ?");
 			prep_statement.setString(1, pos_nr);
 			resSet = prep_statement.executeQuery();
-			if(resSet.last()) {																//if pos_nr is in stock
+			if(resSet.next()) {																//if pos_nr is in stock
 				//update quantity
 				stock_quantity = resSet.getInt("quantity");
 				prep_statement = connection.prepareStatement("UPDATE stock SET quantity = ? WHERE pos_nr = ?");
@@ -180,11 +184,11 @@ public class DataAccess {
 				throw new ArticleNotRegisteredException();
 			}
 		} catch(SQLException e) {
-			
+			e.printStackTrace();
 		}
 	}
 	
-	public static void addOrderToStock(int order_nr) {
+	public void addOrderToStock(int order_nr) {
 		PreparedStatement prep_statement;
 		ResultSet resSet;
 		//get article list
@@ -205,7 +209,7 @@ public class DataAccess {
 		//add articles to stock
 	}
 	
-	private static void addNewToStock(String pos_nr, String art_desc, int quantity, double price) {
+	private void addNewToStock(String pos_nr, String art_desc, int quantity, double price) {
 		PreparedStatement prep_statement;
 		try {
 			prep_statement = connection.prepareStatement("INSERT INTO stock (pos_nr, art_desc, quantity, price) VALUES (?, ?, ?, ?)");
@@ -219,7 +223,7 @@ public class DataAccess {
 		}
 	}
 
-	public static void setArrivalDate(int order_nr, LocalDate arrival) {
+	public void setArrivalDate(int order_nr, LocalDate arrival) {
 		PreparedStatement prep_statement;
 		if(connection != null) {
 			try {
@@ -233,7 +237,7 @@ public class DataAccess {
 		}
 	}
 	
-	public static void setOrderState(int order_nr, OrderState state) {
+	public void setOrderState(int order_nr, OrderState state) {
 		PreparedStatement prep_statement;
 		if(connection != null) {
 			try {
