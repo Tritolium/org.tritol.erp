@@ -1,4 +1,4 @@
-package org.tritol.erp.controlling;
+package org.tritol.erp.controlling.tablemodels;
 
 import java.util.ArrayList;
 

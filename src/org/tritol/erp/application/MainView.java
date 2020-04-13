@@ -18,13 +18,18 @@ public class MainView extends JFrame {
 
 	public static final int MAINVIEW = 0;
 	public static final int ADDORDER = 1;
+	public static final int SHOWORDER = 2;
 	
 	private JMenuBar menuBar = new JMenuBar();
-	private JMenu addMenu = new JMenu("Add");
-	private JMenuItem orderItem = new JMenuItem("Order");
+	private JMenu orderMenu = new JMenu("Order");
+	private JMenuItem addOrderItem = new JMenuItem("Hinzufügen");
+	private JMenuItem showOrderItem = new JMenuItem("Anzeigen");
 	
-	private JPanel mainPanel = new JPanel();
+	private AbstractPanel mainView = new MainPanel();
+	
+	private AbstractPanel mainPanel = new MainPanel();
 	private AddOrderPanel addOrderPanel = new AddOrderPanel();
+	private ShowOrderPanel showOrderPanel = new ShowOrderPanel();
 	
 	public MainView() {
 		super("ERP");
@@ -34,16 +39,21 @@ public class MainView extends JFrame {
 	private void init() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		this.setBounds(200, 200, 500, 350);
+		this.setBounds(100, 100, 750, 500);
 		this.add(menuBar, BorderLayout.NORTH);
-		menuBar.add(addMenu);
-		addMenu.add(orderItem);
+		menuBar.add(orderMenu);
+		orderMenu.add(addOrderItem);
+		orderMenu.add(showOrderItem);
 		
-		this.add(mainPanel, BorderLayout.CENTER);
+		this.add(mainView, BorderLayout.CENTER);
 	}
 	
 	public void setAddOrderListener(ActionListener l) {
-		this.orderItem.addActionListener(l);
+		this.addOrderItem.addActionListener(l);
+	}
+	
+	public void setShowOrderListener(ActionListener l) {
+		this.showOrderItem.addActionListener(l);
 	}
 	
 	public void setAddArticleListener(ActionListener l) {
@@ -54,17 +64,25 @@ public class MainView extends JFrame {
 		this.addOrderPanel.setConfirmOrderListener(l);
 	}
 	
+	public void setGetOrdersFilterListener(ActionListener l) {
+		this.showOrderPanel.setFilterListener(l);
+	}
+	
 	public void setView(int panel) {
-		this.remove(mainPanel);
+		this.remove(mainView);
 		switch(panel) {
 		case MAINVIEW:
-			mainPanel = new JPanel();
+			mainView = mainPanel;
 			break;
 		case ADDORDER:
-			mainPanel = addOrderPanel;
+			mainView = addOrderPanel;
+			break;
+		case SHOWORDER:
+			mainView = showOrderPanel;
 			break;
 		}
-		this.add(mainPanel, BorderLayout.CENTER);
+		mainView.reset();
+		this.add(mainView, BorderLayout.CENTER);
 		this.revalidate();
 		this.repaint();
 		this.setVisible(true);
@@ -74,12 +92,12 @@ public class MainView extends JFrame {
 		return mainPanel;
 	}
 	
-	public AddOrderPanel getOrderView() {
+	public AddOrderPanel getAddOrderView() {
 		return addOrderPanel;
 	}
 	
-	public void addArticleRow() {
-		addOrderPanel.addArticleRow();
+	public ShowOrderPanel getShowOrderView() {
+		return showOrderPanel;
 	}
 	
 }

@@ -2,17 +2,17 @@ package org.tritol.erp.application;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.tritol.erp.controlling.AddOrderTableModel;
+import org.tritol.erp.controlling.tablemodels.AddOrderTableModel;
 
-public class AddOrderPanel extends JPanel {
+public class AddOrderPanel extends AbstractPanel {
 
 	/**
 	 * 
@@ -32,57 +32,29 @@ public class AddOrderPanel extends JPanel {
 
 	private void init() {
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
 
 		order_input = new JTable(new AddOrderTableModel());
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		this.add(order_id_label, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.weightx = 1;
-		this.add(order_id_input, gbc);
-
-		gbc.gridx = 2;
-		gbc.gridy = 0;
-		gbc.weightx = 0;
-		this.add(order_date_label, gbc);
-
-		gbc.gridx = 3;
-		gbc.gridy = 0;
-		gbc.weightx = 1;
-		this.add(order_date_input, gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 4;
-		gbc.gridheight = 3;
-		gbc.weightx = 0;
-		gbc.weighty = 1;
-		gbc.fill = GridBagConstraints.BOTH;
-		this.add(new JScrollPane(order_input), gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 4;
-		gbc.weighty = 0;
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.NONE;
-		this.add(add_row_button, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridy = 4;
-		gbc.anchor = GridBagConstraints.SOUTHEAST;
-		this.add(confirm_order, gbc);
+		addComponent(order_id_label, 0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(order_id_input, 1, 0, 1, 1, 1, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(order_date_label, 2, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(order_date_input, 3, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(new JScrollPane(order_input), 0, 1, 3, 4, 0, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(add_row_button, 0, 4, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(confirm_order, 3, 4, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0);
 	}
 
 	public int getOrderId() {
 		return Integer.parseInt(order_id_input.getText());
 	}
-	
+
 	public String getOrderDate() {
 		return order_date_input.getText();
 	}
