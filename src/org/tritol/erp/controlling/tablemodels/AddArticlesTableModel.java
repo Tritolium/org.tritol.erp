@@ -2,32 +2,18 @@ package org.tritol.erp.controlling.tablemodels;
 
 import java.util.ArrayList;
 
-import javax.swing.table.AbstractTableModel;
-
-public class AddOrderTableModel extends AbstractTableModel {
+public class AddArticlesTableModel extends AbstractArticlesTableModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6598748243409922877L;
 
-	private final String[] columnNames = { "Pos.-Nr.", "Art.-Beschreibung", "Anzahl", "Einzelpreis" };
-
 	private ArrayList<ArrayList<Object>> data = new ArrayList<ArrayList<Object>>();
 
 	@Override
 	public int getRowCount() {
 		return data.size();
-	}
-
-	@Override
-	public int getColumnCount() {
-		return columnNames.length;
-	}
-	
-	@Override
-	public String getColumnName(int column) {
-		return columnNames[column];
 	}
 
 	@Override

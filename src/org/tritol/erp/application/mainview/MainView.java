@@ -1,4 +1,4 @@
-package org.tritol.erp.application;
+package org.tritol.erp.application.mainview;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -8,6 +8,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputListener;
 
 public class MainView extends JFrame {
 	
@@ -66,6 +67,10 @@ public class MainView extends JFrame {
 	
 	public void setGetOrdersFilterListener(ActionListener l) {
 		this.showOrderPanel.setFilterListener(l);
+	}
+	
+	public void setEditOrdersListener(MouseInputListener l) {
+		this.showOrderPanel.setEditOrdersListener(l);
 	}
 	
 	public void setView(int panel) {

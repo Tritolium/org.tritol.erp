@@ -2,7 +2,7 @@ package org.tritol.erp.controlling.tablemodels;
 
 import javax.swing.table.AbstractTableModel;
 
-public class ShowOrderTableModel extends AbstractTableModel {
+public class ShowOrdersTableModel extends AbstractTableModel {
 
 	/**
 	 * 

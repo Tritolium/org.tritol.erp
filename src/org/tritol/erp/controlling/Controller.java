@@ -2,8 +2,14 @@ package org.tritol.erp.controlling;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
-import org.tritol.erp.application.MainView;
+
+import javax.swing.JTable;
+import javax.swing.event.MouseInputListener;
+
+import org.tritol.erp.application.dialog.EditOrderDialog;
+import org.tritol.erp.application.mainview.MainView;
 import org.tritol.erp.data.DataAccess;
 import org.tritol.erp.data.OrderState;
 
@@ -34,6 +40,7 @@ public class Controller {
 
 		// ShowOrderPanel
 		this._view.setGetOrdersFilterListener(new GetOrdersListener());
+		this._view.setEditOrdersListener(new ClickOrderTableListener());
 	}
 
 	/**
@@ -133,7 +140,7 @@ public class Controller {
 	}
 
 	/**
-	 * Loads orders from model to view
+	 * Loads orders from model to ShowOrder-View
 	 * 
 	 * @author Dominik
 	 *
@@ -163,30 +170,83 @@ public class Controller {
 			String pos_nr, art_desc; // writes to database in background
 			int quantity;
 			int year, month, day;
-			double price;
+			double price, shipping;
 			int order_nr = _view.getAddOrderView().getOrderId();
-			Object[][] data = _view.getAddOrderView().getOrderData();
-			String order_date_string = _view.getAddOrderView().getOrderDate();
-			String[] order_date_array;
-			if (order_date_string.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d")) { // if date matches dd.mm.yyyy
-				order_date_array = order_date_string.split("\\.");
-				year = Integer.parseInt(order_date_array[2]);
-				month = Integer.parseInt(order_date_array[1]);
-				day = Integer.parseInt(order_date_array[0]);
-				addOrder(order_nr, LocalDate.of(year, month, day));
-			} else {
-				addOrder(order_nr, LocalDate.now());
-			}
-			if (data != null) {
-				for (Object[] row : data) {
-					pos_nr = (String) row[0];
-					art_desc = (String) row[1];
-					quantity = Integer.parseInt((String) row[2]);
-					price = Double.parseDouble((String) row[3]);
-					addToOrder(order_nr, pos_nr, art_desc, quantity, price);
+			if (order_nr > 0) {
+				Object[][] data = _view.getAddOrderView().getOrderData();
+				String order_date_string = _view.getAddOrderView().getOrderDate();
+				String[] order_date_array;
+				if (order_date_string.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d")) { // if date matches dd.mm.yyyy
+					order_date_array = order_date_string.split("\\.");
+					year = Integer.parseInt(order_date_array[2]);
+					month = Integer.parseInt(order_date_array[1]);
+					day = Integer.parseInt(order_date_array[0]);
+					addOrder(order_nr, LocalDate.of(year, month, day));
+				} else {
+					addOrder(order_nr, LocalDate.now());
 				}
+
+				if (data != null) {
+					for (Object[] row : data) {
+						pos_nr = (String) row[0];
+						art_desc = (String) row[1];
+						quantity = Integer.parseInt((String) row[2]);
+						price = Double.parseDouble((String) row[3]);
+						addToOrder(order_nr, pos_nr, art_desc, quantity, price);
+					}
+				}
+				shipping = Double.parseDouble(_view.getAddOrderView().getShippingCosts());
+				addToOrder(order_nr, "9999", "Versandkosten", 1, shipping);
 			}
 			_view.getAddOrderView().reset();
+		}
+	}
+
+	class ClickOrderTableListener implements MouseInputListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				JTable target = (JTable) e.getSource();
+				int row = target.getSelectedRow();
+				int order_id = Integer.parseInt((String) target.getValueAt(row, 0));
+				new EditOrderDialog(order_id);
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 }

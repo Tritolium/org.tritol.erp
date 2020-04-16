@@ -1,4 +1,4 @@
-package org.tritol.erp.application;
+package org.tritol.erp.application.mainview;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,7 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import org.tritol.erp.controlling.tablemodels.ShowOrderTableModel;
+import javax.swing.event.MouseInputListener;
+
+import org.tritol.erp.controlling.tablemodels.ShowOrdersTableModel;
 
 public class ShowOrderPanel extends AbstractPanel {
 
@@ -27,7 +29,7 @@ public class ShowOrderPanel extends AbstractPanel {
 	private JTextField order_date_filter = new JTextField();
 	private JTextField order_state_filter = new JTextField();
 	private JButton confirm_filter = new JButton("Filter");
-	private JTable order_show;
+	private JTable order_show = new JTable(new ShowOrdersTableModel());
 
 	public ShowOrderPanel() {
 		init();
@@ -35,8 +37,6 @@ public class ShowOrderPanel extends AbstractPanel {
 
 	private void init() {
 		this.setLayout(new GridBagLayout());
-
-		order_show = new JTable(new ShowOrderTableModel());
 
 		addComponent(order_nr_label, 0, 0, 1, 1, 1, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
 				new Insets(0, 0, 0, 0), 0, 0);
@@ -75,9 +75,13 @@ public class ShowOrderPanel extends AbstractPanel {
 	public void setFilterListener(ActionListener l) {
 		confirm_filter.addActionListener(l);
 	}
+	
+	public void setEditOrdersListener(MouseInputListener l) {
+		order_show.addMouseListener(l);
+	}
 
 	public void setData(Object[][] data) {
-		((ShowOrderTableModel) order_show.getModel()).setData(data);
+		((ShowOrdersTableModel) order_show.getModel()).setData(data);
 	}
 
 	public void reset() {

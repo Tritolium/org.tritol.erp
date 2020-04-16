@@ -1,5 +1,10 @@
-package org.tritol.erp.application;
+package org.tritol.erp.application.mainview;
 
+/**
+ * This class provides the standard Panel
+ * @author Dominik
+ *
+ */
 public class MainPanel extends AbstractPanel {
 
 	/**

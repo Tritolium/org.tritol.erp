@@ -1,4 +1,4 @@
-package org.tritol.erp.application;
+package org.tritol.erp.application.mainview;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,7 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.tritol.erp.controlling.tablemodels.AddOrderTableModel;
+import org.tritol.erp.controlling.tablemodels.AddArticlesTableModel;
 
 public class AddOrderPanel extends AbstractPanel {
 
@@ -23,6 +23,8 @@ public class AddOrderPanel extends AbstractPanel {
 	private JTextField order_id_input = new JTextField();
 	private JTextField order_date_input = new JTextField();
 	private JTable order_input;
+	private JLabel shipping_label = new JLabel("Versandkosten");
+	private JTextField shipping_input = new JTextField();
 	private JButton add_row_button = new JButton("Artikel hinzufügen");
 	private JButton confirm_order = new JButton("Order abschließen");
 
@@ -33,7 +35,7 @@ public class AddOrderPanel extends AbstractPanel {
 	private void init() {
 		this.setLayout(new GridBagLayout());
 
-		order_input = new JTable(new AddOrderTableModel());
+		order_input = new JTable(new AddArticlesTableModel());
 
 		addComponent(order_id_label, 0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
 				new Insets(0, 0, 0, 0), 0, 0);
@@ -45,18 +47,30 @@ public class AddOrderPanel extends AbstractPanel {
 				new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(new JScrollPane(order_input), 0, 1, 3, 4, 0, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(0, 0, 0, 0), 0, 0);
-		addComponent(add_row_button, 0, 4, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+		addComponent(shipping_label, 0, 4, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0);
-		addComponent(confirm_order, 3, 4, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+		addComponent(shipping_input, 1, 4, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(add_row_button, 0, 5, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(confirm_order, 3, 5, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0);
 	}
 
 	public int getOrderId() {
-		return Integer.parseInt(order_id_input.getText());
+		try {
+			return Integer.parseInt(order_id_input.getText());
+		} catch (NumberFormatException e) {
+			return 0;
+		}
 	}
 
 	public String getOrderDate() {
 		return order_date_input.getText();
+	}
+
+	public String getShippingCosts() {
+		return shipping_input.getText();
 	}
 
 	/**
@@ -64,7 +78,7 @@ public class AddOrderPanel extends AbstractPanel {
 	 * @return The table data. null if empty
 	 */
 	public Object[][] getOrderData() {
-		return ((AddOrderTableModel) this.order_input.getModel()).getData();
+		return ((AddArticlesTableModel) this.order_input.getModel()).getData();
 	}
 
 	public void setAddArticleListener(ActionListener l) {
@@ -76,7 +90,7 @@ public class AddOrderPanel extends AbstractPanel {
 	}
 
 	public void addArticleRow() {
-		AddOrderTableModel model = (AddOrderTableModel) order_input.getModel();
+		AddArticlesTableModel model = (AddArticlesTableModel) order_input.getModel();
 		model.addRow();
 		this.setVisible(true);
 	}
@@ -84,6 +98,7 @@ public class AddOrderPanel extends AbstractPanel {
 	public void reset() {
 		order_id_input.setText("");
 		order_date_input.setText("");
-		((AddOrderTableModel) order_input.getModel()).clearTable();
+		shipping_input.setText("");
+		((AddArticlesTableModel) order_input.getModel()).clearTable();
 	}
 }

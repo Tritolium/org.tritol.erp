@@ -1,4 +1,4 @@
-package org.tritol.erp.application;
+package org.tritol.erp.application.mainview;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
