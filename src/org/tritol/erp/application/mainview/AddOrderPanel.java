@@ -57,20 +57,20 @@ public class AddOrderPanel extends AbstractPanel {
 				new Insets(0, 0, 0, 0), 0, 0);
 	}
 
-	public int getOrderId() {
-		try {
-			return Integer.parseInt(order_id_input.getText());
-		} catch (NumberFormatException e) {
-			return 0;
-		}
+	public String getOrderId() {
+		return order_id_input.getText();
 	}
 
 	public String getOrderDate() {
 		return order_date_input.getText();
 	}
 
-	public String getShippingCosts() {
-		return shipping_input.getText();
+	public double getShippingCosts() {
+		if(!shipping_input.getText().isBlank()) {
+			return Double.parseDouble(shipping_input.getText());
+		} else {
+			return 0;
+		}
 	}
 
 	/**

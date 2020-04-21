@@ -68,7 +68,7 @@ public class ShowOrderPanel extends AbstractPanel {
 		if (order_date_filter.getText().isBlank()) {
 			return null;
 		} else {
-			return LocalDate.parse(order_date_filter.getText());	//TODO safely parsing more types of dates
+			return LocalDate.parse(order_date_filter.getText());	//FIXME safely parsing more types of dates
 		}
 	}
 

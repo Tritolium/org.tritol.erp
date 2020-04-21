@@ -10,8 +10,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
-public class MainView extends JFrame {
-	
+public class MainFrame extends JFrame {
+
 	/**
 	 * 
 	 */
@@ -20,62 +20,63 @@ public class MainView extends JFrame {
 	public static final int MAINVIEW = 0;
 	public static final int ADDORDER = 1;
 	public static final int SHOWORDER = 2;
-	
+
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenu orderMenu = new JMenu("Order");
 	private JMenuItem addOrderItem = new JMenuItem("Hinzufügen");
 	private JMenuItem showOrderItem = new JMenuItem("Anzeigen");
-	
+
 	private AbstractPanel mainView = new MainPanel();
-	
+
 	private AbstractPanel mainPanel = new MainPanel();
 	private AddOrderPanel addOrderPanel = new AddOrderPanel();
 	private ShowOrderPanel showOrderPanel = new ShowOrderPanel();
-	
-	public MainView() {
+
+	public MainFrame() {
 		super("ERP");
 		init();
 	}
-	
+
 	private void init() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		this.setBounds(100, 100, 750, 500);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.add(menuBar, BorderLayout.NORTH);
 		menuBar.add(orderMenu);
 		orderMenu.add(addOrderItem);
 		orderMenu.add(showOrderItem);
-		
+
 		this.add(mainView, BorderLayout.CENTER);
 	}
-	
+
 	public void setAddOrderListener(ActionListener l) {
 		this.addOrderItem.addActionListener(l);
 	}
-	
+
 	public void setShowOrderListener(ActionListener l) {
 		this.showOrderItem.addActionListener(l);
 	}
-	
+
 	public void setAddArticleListener(ActionListener l) {
 		this.addOrderPanel.setAddArticleListener(l);
 	}
-	
+
 	public void setConfirmOrderListener(ActionListener l) {
 		this.addOrderPanel.setConfirmOrderListener(l);
 	}
-	
+
 	public void setGetOrdersFilterListener(ActionListener l) {
 		this.showOrderPanel.setFilterListener(l);
 	}
-	
+
 	public void setEditOrdersListener(MouseInputListener l) {
 		this.showOrderPanel.setEditOrdersListener(l);
 	}
-	
+
 	public void setView(int panel) {
 		this.remove(mainView);
-		switch(panel) {
+		switch (panel) {
 		case MAINVIEW:
 			mainView = mainPanel;
 			break;
@@ -92,17 +93,17 @@ public class MainView extends JFrame {
 		this.repaint();
 		this.setVisible(true);
 	}
-	
+
 	public JPanel getView() {
 		return mainPanel;
 	}
-	
+
 	public AddOrderPanel getAddOrderView() {
 		return addOrderPanel;
 	}
-	
+
 	public ShowOrderPanel getShowOrderView() {
 		return showOrderPanel;
 	}
-	
+
 }

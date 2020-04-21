@@ -33,22 +33,23 @@ public class ShowOrdersTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch(columnIndex) {
+		switch (columnIndex) {
+		// CHANGE representation of order date
 		case 3:
-			if(data[rowIndex][3].equals("a")) {
+			if (data[rowIndex][3].equals("a")) {
 				return "geliefert";
 			}
-			if(data[rowIndex][3].equals("o")) {
+			if (data[rowIndex][3].equals("o")) {
 				return "bestellt";
 			}
 		default:
 			return data[rowIndex][columnIndex];
 		}
 	}
-	
+
 	public void setData(Object[][] d) {
 		data = d;
 		this.fireTableDataChanged();
 	}
-	
+
 }

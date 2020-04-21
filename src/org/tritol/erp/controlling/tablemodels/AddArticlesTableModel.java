@@ -8,7 +8,8 @@ public class AddArticlesTableModel extends AbstractArticlesTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 6598748243409922877L;
-
+	
+	// CHANGE to Object[][]
 	private ArrayList<ArrayList<Object>> data = new ArrayList<ArrayList<Object>>();
 
 	@Override

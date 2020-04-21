@@ -9,18 +9,20 @@ import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 
 import org.tritol.erp.application.dialog.EditOrderDialog;
-import org.tritol.erp.application.mainview.MainView;
+import org.tritol.erp.application.mainview.MainFrame;
 import org.tritol.erp.data.DataAccess;
 import org.tritol.erp.data.OrderState;
 
 public class Controller {
 
-	private MainView _view;
+	// ADD possibly add own controllers for views
+
+	private MainFrame _view;
 	private DataAccess _model;
 
 	public Controller() {
 		this._model = new DataAccess();
-		this._view = new MainView();
+		this._view = new MainFrame();
 
 		addListener();
 	}
@@ -49,7 +51,7 @@ public class Controller {
 	 * @param order_nr   The order number
 	 * @param order_date The order date
 	 */
-	public void addOrder(int order_nr, LocalDate order_date) {
+	public void addOrder(String order_nr, LocalDate order_date) {
 		_model.addOrder(order_nr, order_date);
 	}
 
@@ -62,7 +64,7 @@ public class Controller {
 	 * @param quantity The articles quantity
 	 * @param price    The articles price
 	 */
-	public void addToOrder(int order_nr, String pos_nr, String art_desc, int quantity, double price) {
+	public void addToOrder(String order_nr, String pos_nr, String art_desc, int quantity, double price) {
 		_model.addToOrder(order_nr, pos_nr, art_desc, quantity, price);
 	}
 
@@ -87,7 +89,13 @@ public class Controller {
 		_view.getShowOrderView().setData(orders);
 	}
 
-	public void setOrderState(int order_nr, OrderState state) {
+	public void getOrderData(String order_nr, EditOrderDialog dialog) {
+		Object[] order_data = _model.getOrderData(order_nr);
+		dialog.setOrderData((LocalDate) order_data[0], (String) order_data[1]);
+		dialog.setArticles(_model.getArticles(order_nr));
+	}
+
+	public void setOrderState(String order_nr, OrderState state) {
 		_model.setOrderState(order_nr, state);
 		if (state == OrderState.ARRIVED) {
 			_model.setArrivalDate(order_nr, LocalDate.now());
@@ -111,7 +119,7 @@ public class Controller {
 	 */
 	class AddOrderListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			_view.setView(MainView.ADDORDER);
+			_view.setView(MainFrame.ADDORDER);
 		}
 	}
 
@@ -123,7 +131,7 @@ public class Controller {
 	 */
 	class ShowOrderListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			_view.setView(MainView.SHOWORDER);
+			_view.setView(MainFrame.SHOWORDER);
 		}
 	}
 
@@ -166,16 +174,19 @@ public class Controller {
 	 */
 	class ConfirmOrderListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			_view.setView(MainView.MAINVIEW); // sets view back to main
+			_view.setView(MainFrame.MAINVIEW); // sets view back to main
 			String pos_nr, art_desc; // writes to database in background
 			int quantity;
 			int year, month, day;
 			double price, shipping;
-			int order_nr = _view.getAddOrderView().getOrderId();
-			if (order_nr > 0) {
+			String order_nr = _view.getAddOrderView().getOrderId();
+			if (!order_nr.isBlank()) {
 				Object[][] data = _view.getAddOrderView().getOrderData();
 				String order_date_string = _view.getAddOrderView().getOrderDate();
 				String[] order_date_array;
+				//FIXME accepting more types of dates
+				//match dates with single-digit days and month, and double-digit years
+				//possibly do this in extra controller
 				if (order_date_string.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d")) { // if date matches dd.mm.yyyy
 					order_date_array = order_date_string.split("\\.");
 					year = Integer.parseInt(order_date_array[2]);
@@ -195,8 +206,10 @@ public class Controller {
 						addToOrder(order_nr, pos_nr, art_desc, quantity, price);
 					}
 				}
-				shipping = Double.parseDouble(_view.getAddOrderView().getShippingCosts());
-				addToOrder(order_nr, "9999", "Versandkosten", 1, shipping);
+				shipping = _view.getAddOrderView().getShippingCosts();
+				if(shipping > 0) {
+					addToOrder(order_nr, "9999", "Versandkosten", 1, shipping);
+				}
 			}
 			_view.getAddOrderView().reset();
 		}
@@ -208,45 +221,34 @@ public class Controller {
 			if (e.getClickCount() == 2) {
 				JTable target = (JTable) e.getSource();
 				int row = target.getSelectedRow();
-				int order_id = Integer.parseInt((String) target.getValueAt(row, 0));
-				new EditOrderDialog(order_id);
+				String order_id = (String) target.getValueAt(row, 0);
+				EditOrderDialog editOrder = new EditOrderDialog(order_id);
+				getOrderData(order_id, editOrder);
 			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 }

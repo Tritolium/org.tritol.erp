@@ -22,7 +22,10 @@ public abstract class AbstractArticlesTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return data.length;
+		if(data != null)
+			return data.length;
+		else
+			return 0;
 	}
 
 	@Override
@@ -32,7 +35,6 @@ public abstract class AbstractArticlesTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		return data[rowIndex][columnIndex];
 	}
 }
