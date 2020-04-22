@@ -29,7 +29,7 @@ public class DataAccess {
 
 		File d_file = new File("database.sqlite");
 
-		Boolean init = false;
+		boolean init = false;
 
 		try {
 			if (!d_file.isFile()) {
@@ -61,16 +61,17 @@ public class DataAccess {
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(
-					"CREATE TABLE _order(order_nr varchar(24), order_date date, arrival_date date default null, order_state varchar(1) default 'o', primary key (order_nr))");
+					"CREATE TABLE supplier (supplier_name varchar(64), street varchar(64), housenumber varchar(5), postcode varchar(5), city varchar(64), primary key (supplier_name))");
+			statement.executeUpdate(
+					"CREATE TABLE _order(order_nr varchar(24), supplier varchar(64), order_date date, arrival_date date default null, order_state varchar(1) default 'o', primary key (order_nr), foreign key (supplier) references supplier (supplier_name))");
 			statement.executeUpdate(
 					"CREATE TABLE consumption(con_nr int, con_date date, usage varchar(256), primary key (con_nr))");
 			statement.executeUpdate(
 					"CREATE TABLE o_article(order_nr varchar(24), pos_nr varchar(24), art_desc varchar(256), quantity int, price real, foreign key (order_nr) references _order (order_nr))");
 			statement.executeUpdate(
-					"CREATE TABLE c_article (" + "con_nr int," + "pos_nr varchar(24)," + "art_desc varchar(256),"
-							+ "quantity int," + "foreign key (con_nr) references consumption (con_nr)" + ")");
-			statement.executeUpdate("CREATE TABLE stock (" + "pos_nr varchar(24)," + "art_desc varchar(256),"
-					+ "quantity int," + "price real," + "primary key (pos_nr)" + ")");
+					"CREATE TABLE c_article (con_nr int, pos_nr varchar(24), art_desc varchar(256), quantity int, foreign key (con_nr) references consumption (con_nr))");
+			statement.executeUpdate(
+					"CREATE TABLE stock (pos_nr varchar(24), art_desc varchar(256), quantity int, price real, primary key (pos_nr))");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -100,41 +101,51 @@ public class DataAccess {
 		}
 	}
 
-	public void addOrder(String order_nr, LocalDate order_date) {
+	public void addOrder(String order_nr, String supplier, LocalDate order_date) {
 		PreparedStatement prep_statement;
-		if (connection != null) {
-			try {
-				prep_statement = connection.prepareStatement("INSERT INTO _order (order_nr, order_date) VALUES (?, ?)");
-				prep_statement.setString(1, order_nr);
-				prep_statement.setDate(2, Date.valueOf(order_date));
-				prep_statement.execute();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			connect();
-			addOrder(order_nr, order_date);
+		try {
+			prep_statement = connection
+					.prepareStatement("INSERT INTO _order (order_nr, supplier, order_date) VALUES (?, ?, ?)");
+			prep_statement.setString(1, order_nr);
+			prep_statement.setString(2, supplier);
+			prep_statement.setDate(3, Date.valueOf(order_date));
+			prep_statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
 	public void addToOrder(String order_nr, String pos_nr, String art_desc, int quantity, double price) {
 		PreparedStatement prep_statement;
-		if (connection != null) {
-			try {
-				prep_statement = connection.prepareStatement(
-						"INSERT INTO o_article (order_nr, pos_nr, art_desc, quantity, price) VALUES (?, ?, ?, ?, ?)");
-				prep_statement.setString(1, order_nr);
-				prep_statement.setString(2, pos_nr);
-				prep_statement.setString(3, art_desc);
-				prep_statement.setInt(4, quantity);
-				prep_statement.setDouble(5, price);
-				prep_statement.execute();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			connect();
-			addToOrder(order_nr, pos_nr, art_desc, quantity, price);
+
+		try {
+			prep_statement = connection.prepareStatement(
+					"INSERT INTO o_article (order_nr, pos_nr, art_desc, quantity, price) VALUES (?, ?, ?, ?, ?)");
+			prep_statement.setString(1, order_nr);
+			prep_statement.setString(2, pos_nr);
+			prep_statement.setString(3, art_desc);
+			prep_statement.setInt(4, quantity);
+			prep_statement.setDouble(5, price);
+			prep_statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void addSupplier(String supplier_name, String street, String house_number, String post_code, String city) {
+		PreparedStatement prep_statement;
+
+		try {
+			prep_statement = connection.prepareStatement(
+					"INSERT INTO supplier (supplier_name, street, housenumber, postcode, city) VALUES (?, ?, ?, ?, ?)");
+			prep_statement.setString(1, supplier_name);
+			prep_statement.setString(2, street);
+			prep_statement.setString(3, house_number);
+			prep_statement.setString(4, post_code);
+			prep_statement.setString(5, city);
+			prep_statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -163,6 +174,7 @@ public class DataAccess {
 	}
 
 	public Object[][] getOrders(String order_nr, String order_state, LocalDate order_date) {
+		// ADD filter for supplier
 		int NUMBER = 1;
 		int STATE = 2;
 		int DATE = 4;
@@ -237,6 +249,7 @@ public class DataAccess {
 
 			while (result_set.next()) {
 				order = new ArrayList<Object>();
+				order.add(result_set.getString("supplier"));
 				order.add(result_set.getString("order_nr"));
 				order.add(result_set.getDate("order_date").toLocalDate());
 				// arrival-date needs check for null
@@ -250,10 +263,10 @@ public class DataAccess {
 				converter.add(order);
 			}
 
-			results = new Object[converter.size()][4];
+			results = new Object[converter.size()][5];
 
 			for (int i = 0; i < converter.size(); i++) {
-				for (int j = 0; j < 4; j++) {
+				for (int j = 0; j < 5; j++) {
 					results[i][j] = converter.get(i).get(j);
 				}
 			}
@@ -308,11 +321,48 @@ public class DataAccess {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		results = new Object[converter.size()][5];
-		
-		for(int i = 0; i < results.length; i++) {
-			for(int j = 0; j < 5; j++) {
+
+		for (int i = 0; i < results.length; i++) {
+			for (int j = 0; j < 5; j++) {
+				results[i][j] = converter.get(i).get(j);
+			}
+		}
+
+		return results;
+	}
+
+	public Object[][] getSuppliers() {
+		// ADD filters
+		PreparedStatement prep_statement;
+		ResultSet res_set;
+
+		ArrayList<ArrayList<Object>> converter = new ArrayList<>();
+		ArrayList<Object> supplier;
+
+		Object[][] results = null;
+
+		try {
+			prep_statement = connection.prepareStatement("SELECT * FROM supplier");
+			res_set = prep_statement.executeQuery();
+			while (res_set.next()) {
+				supplier = new ArrayList<Object>();
+				supplier.add(res_set.getString("supplier_name"));
+				supplier.add(res_set.getString("street"));
+				supplier.add(res_set.getString("housenumber"));
+				supplier.add(res_set.getString("postcode"));
+				supplier.add(res_set.getString("city"));
+				converter.add(supplier);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		results = new Object[converter.size()][5];
+
+		for (int i = 0; i < results.length; i++) {
+			for (int j = 0; j < 5; j++) {
 				results[i][j] = converter.get(i).get(j);
 			}
 		}

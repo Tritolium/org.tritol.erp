@@ -1,28 +1,18 @@
-package org.tritol.erp.application.mainview;
+package org.tritol.erp.application.dialog;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import javax.swing.JPanel;
+import javax.swing.JDialog;
 
-public abstract class AbstractPanel extends JPanel {
-
+public abstract class AbstractDialog extends JDialog {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
-	protected static final int NONE = GridBagConstraints.NONE;
-	protected static final int EAST = GridBagConstraints.EAST;
-	protected static final int WEST = GridBagConstraints.WEST;
+	private static final long serialVersionUID = -7168295588576016963L;
 	protected static final int CENTER = GridBagConstraints.CENTER;
 	protected static final int HORIZONTAL = GridBagConstraints.HORIZONTAL;
-	protected static final int BOTH = GridBagConstraints.BOTH;
-
-	public void reset() {
-
-	}
 
 	/**
 	 * 
@@ -39,7 +29,7 @@ public abstract class AbstractPanel extends JPanel {
 	 * @param ipadx
 	 * @param ipady
 	 */
-	protected void addComponent(Component comp, int x, int y, int height, int width, double weightx, double weighty,
+	protected void addComponent(Component comp, int x, int y, int width, int height, double weightx, double weighty,
 			int anchor, int fill, Insets insets, int ipadx, int ipady) {
 		GridBagConstraints gbc = new GridBagConstraints(x, y, width, height, weightx, weighty, anchor, fill, insets,
 				ipadx, ipady);
@@ -47,5 +37,4 @@ public abstract class AbstractPanel extends JPanel {
 		this.add(comp, gbc);
 
 	}
-
 }

@@ -22,9 +22,10 @@ public class MainFrame extends JFrame {
 	public static final int SHOWORDER = 2;
 
 	private JMenuBar menuBar = new JMenuBar();
-	private JMenu orderMenu = new JMenu("Order");
-	private JMenuItem addOrderItem = new JMenuItem("Hinzufügen");
+	private JMenu orderMenu = new JMenu("Einkauf");
+	private JMenuItem addOrderItem = new JMenuItem("Erfassen");
 	private JMenuItem showOrderItem = new JMenuItem("Anzeigen");
+	private JMenuItem addSupplierItem = new JMenuItem("Lieferant anlegen");
 
 	private AbstractPanel mainView = new MainPanel();
 
@@ -38,14 +39,16 @@ public class MainFrame extends JFrame {
 	}
 
 	private void init() {
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		this.setBounds(100, 100, 750, 500);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
 		this.add(menuBar, BorderLayout.NORTH);
 		menuBar.add(orderMenu);
 		orderMenu.add(addOrderItem);
 		orderMenu.add(showOrderItem);
+		orderMenu.add(addSupplierItem);
 
 		this.add(mainView, BorderLayout.CENTER);
 	}
@@ -56,6 +59,10 @@ public class MainFrame extends JFrame {
 
 	public void setShowOrderListener(ActionListener l) {
 		this.showOrderItem.addActionListener(l);
+	}
+	
+	public void setAddSupplierListener(ActionListener l) {
+		this.addSupplierItem.addActionListener(l);
 	}
 
 	public void setAddArticleListener(ActionListener l) {

@@ -8,8 +8,9 @@ import java.time.LocalDate;
 import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 
-import org.tritol.erp.application.dialog.EditOrderDialog;
+import org.tritol.erp.application.dialog.*;
 import org.tritol.erp.application.mainview.MainFrame;
+import org.tritol.erp.controlling.dialog.AddSupplierController;
 import org.tritol.erp.data.DataAccess;
 import org.tritol.erp.data.OrderState;
 
@@ -17,8 +18,12 @@ public class Controller {
 
 	// ADD possibly add own controllers for views
 
+	// ADD button to safely close the program
+
 	private MainFrame _view;
 	private DataAccess _model;
+
+	private boolean running = true;
 
 	public Controller() {
 		this._model = new DataAccess();
@@ -35,6 +40,7 @@ public class Controller {
 		// top menu items
 		this._view.setAddOrderListener(new AddOrderListener());
 		this._view.setShowOrderListener(new ShowOrderListener());
+		this._view.setAddSupplierListener(new AddSupplierListener());
 
 		// AddOrderPanel buttons
 		this._view.setAddArticleListener(new AddArticleListener());
@@ -51,8 +57,8 @@ public class Controller {
 	 * @param order_nr   The order number
 	 * @param order_date The order date
 	 */
-	public void addOrder(String order_nr, LocalDate order_date) {
-		_model.addOrder(order_nr, order_date);
+	public void addOrder(String order_nr, String supplier, LocalDate order_date) {
+		_model.addOrder(order_nr, supplier, order_date);
 	}
 
 	/**
@@ -66,6 +72,14 @@ public class Controller {
 	 */
 	public void addToOrder(String order_nr, String pos_nr, String art_desc, int quantity, double price) {
 		_model.addToOrder(order_nr, pos_nr, art_desc, quantity, price);
+	}
+
+	public void addSupplier(String supplier_name, String street, String housenumber, String postcode, String city) {
+		_model.addSupplier(supplier_name, street, housenumber, postcode, city);
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 	/**
@@ -119,6 +133,14 @@ public class Controller {
 	 */
 	class AddOrderListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			Object[][] supplier_data = _model.getSuppliers();
+			if (supplier_data != null) {
+				String[] supplier_names = new String[supplier_data.length];
+				for (int i = 0; i < supplier_names.length; i++) {
+					supplier_names[i] = (String) supplier_data[i][0];
+				}
+				_view.getAddOrderView().setSuppliers(supplier_names);
+			}
 			_view.setView(MainFrame.ADDORDER);
 		}
 	}
@@ -132,6 +154,18 @@ public class Controller {
 	class ShowOrderListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			_view.setView(MainFrame.SHOWORDER);
+		}
+	}
+
+	/**
+	 * Starts controller for supplier input dialog
+	 * 
+	 * @author Dominik
+	 *
+	 */
+	class AddSupplierListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			new AddSupplierController(_model);
 		}
 	}
 
@@ -181,24 +215,25 @@ public class Controller {
 			double price, shipping;
 			String order_nr = _view.getAddOrderView().getOrderId();
 			if (!order_nr.isBlank()) {
-				Object[][] data = _view.getAddOrderView().getOrderData();
+				Object[][] order_articles = _view.getAddOrderView().getOrderData();
+				String supplier = _view.getAddOrderView().getSupplier();; // TODO get supplier from view
 				String order_date_string = _view.getAddOrderView().getOrderDate();
 				String[] order_date_array;
-				//FIXME accepting more types of dates
-				//match dates with single-digit days and month, and double-digit years
-				//possibly do this in extra controller
+				// FIXME accepting more types of dates
+				// match dates with single-digit days and month, and double-digit years
+				// possibly do this in extra controller
 				if (order_date_string.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d")) { // if date matches dd.mm.yyyy
 					order_date_array = order_date_string.split("\\.");
 					year = Integer.parseInt(order_date_array[2]);
 					month = Integer.parseInt(order_date_array[1]);
 					day = Integer.parseInt(order_date_array[0]);
-					addOrder(order_nr, LocalDate.of(year, month, day));
+					addOrder(order_nr, supplier, LocalDate.of(year, month, day));
 				} else {
-					addOrder(order_nr, LocalDate.now());
+					addOrder(order_nr, supplier, LocalDate.now());
 				}
 
-				if (data != null) {
-					for (Object[] row : data) {
+				if (order_articles != null) {
+					for (Object[] row : order_articles) {
 						pos_nr = (String) row[0];
 						art_desc = (String) row[1];
 						quantity = Integer.parseInt((String) row[2]);
@@ -207,7 +242,7 @@ public class Controller {
 					}
 				}
 				shipping = _view.getAddOrderView().getShippingCosts();
-				if(shipping > 0) {
+				if (shipping > 0) {
 					addToOrder(order_nr, "9999", "Versandkosten", 1, shipping);
 				}
 			}
@@ -215,6 +250,12 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Opens a dialog for editing an order
+	 * 
+	 * @author Dominik
+	 *
+	 */
 	class ClickOrderTableListener implements MouseInputListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -251,4 +292,6 @@ public class Controller {
 		public void mouseMoved(MouseEvent e) {
 		}
 	}
+
+	
 }

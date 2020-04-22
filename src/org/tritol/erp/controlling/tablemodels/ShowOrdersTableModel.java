@@ -9,7 +9,7 @@ public class ShowOrdersTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = -5660910734713715456L;
 
-	private final String[] columnNames = { "Order-Nr.", "Order-Datum", "Liefer-Datum", "Status" };
+	private final String[] columnNames = { "Lieferant", "Order-Nr.", "Order-Datum", "Liefer-Datum", "Status" };
 
 	private Object[][] data;
 
@@ -35,11 +35,11 @@ public class ShowOrdersTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch (columnIndex) {
 		// CHANGE representation of order date
-		case 3:
-			if (data[rowIndex][3].equals("a")) {
+		case 4:
+			if (data[rowIndex][4].equals("a")) {
 				return "geliefert";
 			}
-			if (data[rowIndex][3].equals("o")) {
+			if (data[rowIndex][4].equals("o")) {
 				return "bestellt";
 			}
 		default:
