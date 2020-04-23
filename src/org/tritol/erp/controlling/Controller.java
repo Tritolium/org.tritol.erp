@@ -216,13 +216,10 @@ public class Controller {
 			String order_nr = _view.getAddOrderView().getOrderId();
 			if (!order_nr.isBlank()) {
 				Object[][] order_articles = _view.getAddOrderView().getOrderData();
-				String supplier = _view.getAddOrderView().getSupplier();; // TODO get supplier from view
+				String supplier = _view.getAddOrderView().getSupplier();
 				String order_date_string = _view.getAddOrderView().getOrderDate();
 				String[] order_date_array;
-				// FIXME accepting more types of dates
-				// match dates with single-digit days and month, and double-digit years
-				// possibly do this in extra controller
-				if (order_date_string.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d")) { // if date matches dd.mm.yyyy
+				if (!order_date_string.equals("none")) {
 					order_date_array = order_date_string.split("\\.");
 					year = Integer.parseInt(order_date_array[2]);
 					month = Integer.parseInt(order_date_array[1]);
@@ -262,7 +259,7 @@ public class Controller {
 			if (e.getClickCount() == 2) {
 				JTable target = (JTable) e.getSource();
 				int row = target.getSelectedRow();
-				String order_id = (String) target.getValueAt(row, 0);
+				String order_id = (String) target.getValueAt(row, 1);
 				EditOrderDialog editOrder = new EditOrderDialog(order_id);
 				getOrderData(order_id, editOrder);
 			}
@@ -293,5 +290,4 @@ public class Controller {
 		}
 	}
 
-	
 }

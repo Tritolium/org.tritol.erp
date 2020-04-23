@@ -65,17 +65,18 @@ public class ShowOrderPanel extends AbstractPanel {
 	}
 
 	public LocalDate getOrderDate() {
-		if (order_date_filter.getText().isBlank()) {
-			return null;
+		if (matchDate(order_date_filter.getText())) {
+			String[] date = order_date_filter.getText().split("\\.");
+			return LocalDate.of(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]));
 		} else {
-			return LocalDate.parse(order_date_filter.getText());	//FIXME safely parsing more types of dates
+			return null;
 		}
 	}
 
 	public void setFilterListener(ActionListener l) {
 		confirm_filter.addActionListener(l);
 	}
-	
+
 	public void setEditOrdersListener(MouseInputListener l) {
 		order_show.addMouseListener(l);
 	}
@@ -89,5 +90,14 @@ public class ShowOrderPanel extends AbstractPanel {
 		order_date_filter.setText("");
 		order_state_filter.setText("");
 		confirm_filter.doClick();
+	}
+
+	private boolean matchDate(String date) {
+		if (date.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\d\\.\\d\\d\\d\\d")
+				|| date.matches("\\d\\d\\.\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\.\\d\\d\\d\\d")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

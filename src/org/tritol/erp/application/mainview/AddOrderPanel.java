@@ -23,7 +23,7 @@ public class AddOrderPanel extends AbstractPanel {
 	private JLabel order_supplier = new JLabel("Lieferant:");
 	private JLabel shipping_label = new JLabel("Versandkosten");
 	private JTextField order_id_input = new JTextField();
-	private JTextField order_date_input = new JTextField();
+	private JTextField order_date_input = new JTextField(); // CHANGE use extra date input
 	private JComboBox<String> order_supplier_input = new JComboBox<String>();
 	private JTable order_input;
 	private JTextField shipping_input = new JTextField();
@@ -38,7 +38,7 @@ public class AddOrderPanel extends AbstractPanel {
 		this.setLayout(new GridBagLayout());
 
 		order_input = new JTable(new AddArticlesTableModel());
-		
+
 		addComponent(order_id_label, 0, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(order_id_input, 1, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(order_date_label, 2, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
@@ -57,13 +57,17 @@ public class AddOrderPanel extends AbstractPanel {
 	}
 
 	public String getOrderDate() {
-		return order_date_input.getText();
+		if (matchDate(order_date_input.getText())) {
+			return order_date_input.getText();
+		} else {
+			return "none";
+		}
 	}
 
 	public String getSupplier() {
 		return (String) order_supplier_input.getSelectedItem();
 	}
-	
+
 	public double getShippingCosts() {
 		if (!shipping_input.getText().isBlank()) {
 			return Double.parseDouble(shipping_input.getText());
@@ -87,10 +91,10 @@ public class AddOrderPanel extends AbstractPanel {
 	public void setConfirmOrderListener(ActionListener l) {
 		this.confirm_order.addActionListener(l);
 	}
-	
+
 	public void setSuppliers(String[] suppliers) {
 		order_supplier_input.removeAllItems();
-		for(int i = 0; i < suppliers.length; i++) {
+		for (int i = 0; i < suppliers.length; i++) {
 			order_supplier_input.addItem(suppliers[i]);
 		}
 	}
@@ -106,5 +110,14 @@ public class AddOrderPanel extends AbstractPanel {
 		order_date_input.setText("");
 		shipping_input.setText("");
 		((AddArticlesTableModel) order_input.getModel()).clearTable();
+	}
+
+	private boolean matchDate(String date) {
+		if (date.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\d\\.\\d\\d\\d\\d")
+				|| date.matches("\\d\\d\\.\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\.\\d\\d\\d\\d")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
