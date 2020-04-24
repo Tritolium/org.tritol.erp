@@ -11,8 +11,11 @@ public abstract class AbstractDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = -7168295588576016963L;
+	protected static final int EAST = GridBagConstraints.EAST;
+	protected static final int WEST = GridBagConstraints.WEST;
 	protected static final int CENTER = GridBagConstraints.CENTER;
 	protected static final int HORIZONTAL = GridBagConstraints.HORIZONTAL;
+	protected static final int BOTH = GridBagConstraints.BOTH;
 
 	/**
 	 * 
@@ -36,5 +39,14 @@ public abstract class AbstractDialog extends JDialog {
 
 		this.add(comp, gbc);
 
+	}
+
+	protected boolean matchDate(String date) {
+		if (date.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\d\\.\\d\\d\\d\\d")
+				|| date.matches("\\d\\d\\.\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\.\\d\\d\\d\\d")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

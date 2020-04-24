@@ -1,5 +1,7 @@
 package org.tritol.erp.controlling.tablemodels;
 
+import java.time.LocalDate;
+
 import javax.swing.table.AbstractTableModel;
 
 public class ShowOrdersTableModel extends AbstractTableModel {
@@ -34,12 +36,15 @@ public class ShowOrdersTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch (columnIndex) {
-		// CHANGE representation of order date
-		case 4:
-			if (data[rowIndex][4].equals("a")) {
+		case 2: // order_date
+			return formatDate((LocalDate) data[rowIndex][columnIndex]);
+		case 3: // arrival_date
+			return formatDate((LocalDate) data[rowIndex][columnIndex]);
+		case 4: // order_state
+			if (data[rowIndex][columnIndex].equals("a")) {
 				return "geliefert";
 			}
-			if (data[rowIndex][4].equals("o")) {
+			if (data[rowIndex][columnIndex].equals("o")) {
 				return "bestellt";
 			}
 		default:
@@ -50,6 +55,20 @@ public class ShowOrdersTableModel extends AbstractTableModel {
 	public void setData(Object[][] d) {
 		data = d;
 		this.fireTableDataChanged();
+	}
+
+	private String formatDate(LocalDate date) {
+		StringBuilder date_string_builder;
+		if (date != null) {
+			date_string_builder = new StringBuilder();
+			date_string_builder.append(date.getDayOfMonth());
+			date_string_builder.append(".");
+			date_string_builder.append(date.getMonthValue());
+			date_string_builder.append(".");
+			date_string_builder.append(date.getYear());
+			return date_string_builder.toString();
+		}
+		return "---";
 	}
 
 }

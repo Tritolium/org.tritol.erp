@@ -4,14 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import org.tritol.erp.application.dialog.AddSupplierDialog;
+import org.tritol.erp.controlling.Controller;
 import org.tritol.erp.data.DataAccess;
 
-public class AddSupplierController {
+public class AddSupplierController extends AbstractDialogController{
 	
 	private AddSupplierDialog _view;
 	private DataAccess _model;
 	
-	public AddSupplierController(DataAccess model) {
+	public AddSupplierController(Controller parent, DataAccess model) {
+		super(parent);
 		_view = new AddSupplierDialog();
 		_model = model;
 		

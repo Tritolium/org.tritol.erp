@@ -4,15 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 
 import org.tritol.erp.application.dialog.*;
 import org.tritol.erp.application.mainview.MainFrame;
+import org.tritol.erp.controlling.dialog.AbstractDialogController;
+import org.tritol.erp.controlling.dialog.AddOrderController;
 import org.tritol.erp.controlling.dialog.AddSupplierController;
+import org.tritol.erp.controlling.dialog.EditOrderController;
 import org.tritol.erp.data.DataAccess;
-import org.tritol.erp.data.OrderState;
 
 public class Controller {
 
@@ -22,12 +25,16 @@ public class Controller {
 
 	private MainFrame _view;
 	private DataAccess _model;
+	private Controller _controller;
+	
+	private ArrayList<AbstractDialogController> dialogControllerRegister = new ArrayList<AbstractDialogController>();
 
 	private boolean running = true;
 
 	public Controller() {
 		this._model = new DataAccess();
 		this._view = new MainFrame();
+		this._controller = this; // reference to self. For usage in ActionListeners
 
 		addListener();
 	}
@@ -37,14 +44,13 @@ public class Controller {
 	}
 
 	private void addListener() {
-		// top menu items
+		//top menu ERP
+		this._view.setCloseERPListener(new CloseERPListener());
+		
+		// top menu distribution
 		this._view.setAddOrderListener(new AddOrderListener());
 		this._view.setShowOrderListener(new ShowOrderListener());
 		this._view.setAddSupplierListener(new AddSupplierListener());
-
-		// AddOrderPanel buttons
-		this._view.setAddArticleListener(new AddArticleListener());
-		this._view.setConfirmOrderListener(new ConfirmOrderListener());
 
 		// ShowOrderPanel
 		this._view.setGetOrdersFilterListener(new GetOrdersListener());
@@ -109,14 +115,6 @@ public class Controller {
 		dialog.setArticles(_model.getArticles(order_nr));
 	}
 
-	public void setOrderState(String order_nr, OrderState state) {
-		_model.setOrderState(order_nr, state);
-		if (state == OrderState.ARRIVED) {
-			_model.setArrivalDate(order_nr, LocalDate.now());
-			_model.addOrderToStock(order_nr);
-		}
-	}
-
 	public void addConsumption(int con_nr, LocalDate con_date, String usage) {
 		_model.addConsumption(con_nr, con_date, usage);
 	}
@@ -124,24 +122,39 @@ public class Controller {
 	public void disconnect() {
 		_model.disconnect();
 	}
+	
+	public void registerController(AbstractDialogController dialogController) {
+		dialogControllerRegister.add(dialogController);
+	}
+	
+	public void unregisterController(AbstractDialogController dialogController) {
+		dialogControllerRegister.remove(dialogController);
+	}
 
 	/**
-	 * Changes the view to AddOrder
+	 * Closes the program
+	 * @author Dominik
+	 *
+	 */
+	class CloseERPListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_view.dispose();
+			_model.disconnect();
+		}
+		
+	}
+	
+	/**
+	 * Starts controller for order input dialog
 	 * 
 	 * @author Dominik
 	 *
 	 */
 	class AddOrderListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Object[][] supplier_data = _model.getSuppliers();
-			if (supplier_data != null) {
-				String[] supplier_names = new String[supplier_data.length];
-				for (int i = 0; i < supplier_names.length; i++) {
-					supplier_names[i] = (String) supplier_data[i][0];
-				}
-				_view.getAddOrderView().setSuppliers(supplier_names);
-			}
-			_view.setView(MainFrame.ADDORDER);
+			new AddOrderController(_controller, _model);
 		}
 	}
 
@@ -165,19 +178,7 @@ public class Controller {
 	 */
 	class AddSupplierListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			new AddSupplierController(_model);
-		}
-	}
-
-	/**
-	 * Adds row to the table in AddOrder-View
-	 * 
-	 * @author Dominik
-	 *
-	 */
-	class AddArticleListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			_view.getAddOrderView().addArticleRow();
+			new AddSupplierController(_controller, _model);
 		}
 	}
 
@@ -201,53 +202,6 @@ public class Controller {
 	}
 
 	/**
-	 * Implements method to add an Order to the database
-	 * 
-	 * @author Dominik
-	 *
-	 */
-	class ConfirmOrderListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			_view.setView(MainFrame.MAINVIEW); // sets view back to main
-			String pos_nr, art_desc; // writes to database in background
-			int quantity;
-			int year, month, day;
-			double price, shipping;
-			String order_nr = _view.getAddOrderView().getOrderId();
-			if (!order_nr.isBlank()) {
-				Object[][] order_articles = _view.getAddOrderView().getOrderData();
-				String supplier = _view.getAddOrderView().getSupplier();
-				String order_date_string = _view.getAddOrderView().getOrderDate();
-				String[] order_date_array;
-				if (!order_date_string.equals("none")) {
-					order_date_array = order_date_string.split("\\.");
-					year = Integer.parseInt(order_date_array[2]);
-					month = Integer.parseInt(order_date_array[1]);
-					day = Integer.parseInt(order_date_array[0]);
-					addOrder(order_nr, supplier, LocalDate.of(year, month, day));
-				} else {
-					addOrder(order_nr, supplier, LocalDate.now());
-				}
-
-				if (order_articles != null) {
-					for (Object[] row : order_articles) {
-						pos_nr = (String) row[0];
-						art_desc = (String) row[1];
-						quantity = Integer.parseInt((String) row[2]);
-						price = Double.parseDouble((String) row[3]);
-						addToOrder(order_nr, pos_nr, art_desc, quantity, price);
-					}
-				}
-				shipping = _view.getAddOrderView().getShippingCosts();
-				if (shipping > 0) {
-					addToOrder(order_nr, "9999", "Versandkosten", 1, shipping);
-				}
-			}
-			_view.getAddOrderView().reset();
-		}
-	}
-
-	/**
 	 * Opens a dialog for editing an order
 	 * 
 	 * @author Dominik
@@ -260,8 +214,7 @@ public class Controller {
 				JTable target = (JTable) e.getSource();
 				int row = target.getSelectedRow();
 				String order_id = (String) target.getValueAt(row, 1);
-				EditOrderDialog editOrder = new EditOrderDialog(order_id);
-				getOrderData(order_id, editOrder);
+				new EditOrderController(_controller, _model, order_id);
 			}
 		}
 

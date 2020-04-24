@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.MouseInputListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tritol.erp.controlling.tablemodels.ShowOrdersTableModel;
 
@@ -36,6 +37,13 @@ public class ShowOrderPanel extends AbstractPanel {
 	}
 
 	private void init() {
+		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+		
+		
+		this.order_show.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+		this.order_show.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+		this.order_show.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
 		this.setLayout(new GridBagLayout());
 
 		addComponent(order_nr_label, 0, 0, 1, 1, 1, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,

@@ -1,8 +1,10 @@
-package org.tritol.erp.application.mainview;
+package org.tritol.erp.application.dialog;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -12,35 +14,38 @@ import javax.swing.JTextField;
 
 import org.tritol.erp.controlling.tablemodels.AddArticlesTableModel;
 
-public class AddOrderPanel extends AbstractPanel {
+public class AddOrderDialog extends AbstractDialog {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5085109104000138202L;
+	private static final long serialVersionUID = -276789095503385395L;
+
 	private JLabel order_id_label = new JLabel("Order-Nummer:");
 	private JLabel order_date_label = new JLabel("Order-Datum:");
 	private JLabel order_supplier = new JLabel("Lieferant:");
 	private JLabel shipping_label = new JLabel("Versandkosten");
-	private JTextField order_id_input = new JTextField();
+	private JTextField order_nr_input = new JTextField();
 	private JTextField order_date_input = new JTextField(); // CHANGE use extra date input
-	private JComboBox<String> order_supplier_input = new JComboBox<String>();
+	private JComboBox<String> order_supplier_input;
 	private JTable order_input;
 	private JTextField shipping_input = new JTextField();
 	private JButton add_row_button = new JButton("Artikel hinzufügen");
 	private JButton confirm_order = new JButton("Order abschließen");
 
-	public AddOrderPanel() {
-		init();
+	public AddOrderDialog(String[] suppliers) {
+		init(suppliers);
 	}
 
-	private void init() {
+	public void init(String[] suppliers) {
 		this.setLayout(new GridBagLayout());
+		this.setBounds(100, 100, 1000, 600);
 
 		order_input = new JTable(new AddArticlesTableModel());
+		order_supplier_input = new JComboBox<String>(suppliers);
 
 		addComponent(order_id_label, 0, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
-		addComponent(order_id_input, 1, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+		addComponent(order_nr_input, 1, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(order_date_label, 2, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(order_date_input, 3, 0, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(order_supplier, 0, 1, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
@@ -50,17 +55,20 @@ public class AddOrderPanel extends AbstractPanel {
 		addComponent(shipping_input, 1, 6, 1, 1, 1, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(add_row_button, 0, 7, 1, 1, 0, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 		addComponent(confirm_order, 3, 7, 1, 1, 0, 0, CENTER, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+	
+		this.setVisible(true);
 	}
 
-	public String getOrderId() {
-		return order_id_input.getText();
+	public String getOrderNr() {
+		return order_nr_input.getText();
 	}
 
-	public String getOrderDate() {
+	public LocalDate getOrderDate() {
 		if (matchDate(order_date_input.getText())) {
-			return order_date_input.getText();
+			String[] date = order_date_input.getText().split("\\.");
+			return LocalDate.of(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]));
 		} else {
-			return "none";
+			return null;
 		}
 	}
 
@@ -92,32 +100,8 @@ public class AddOrderPanel extends AbstractPanel {
 		this.confirm_order.addActionListener(l);
 	}
 
-	public void setSuppliers(String[] suppliers) {
-		order_supplier_input.removeAllItems();
-		for (int i = 0; i < suppliers.length; i++) {
-			order_supplier_input.addItem(suppliers[i]);
-		}
-	}
-
 	public void addArticleRow() {
-		AddArticlesTableModel model = (AddArticlesTableModel) order_input.getModel();
-		model.addRow();
+		((AddArticlesTableModel) order_input.getModel()).addRow();
 		this.setVisible(true);
-	}
-
-	public void reset() {
-		order_id_input.setText("");
-		order_date_input.setText("");
-		shipping_input.setText("");
-		((AddArticlesTableModel) order_input.getModel()).clearTable();
-	}
-
-	private boolean matchDate(String date) {
-		if (date.matches("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\d\\.\\d\\d\\d\\d")
-				|| date.matches("\\d\\d\\.\\d\\.\\d\\d\\d\\d") || date.matches("\\d\\.\\d\\.\\d\\d\\d\\d")) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 }

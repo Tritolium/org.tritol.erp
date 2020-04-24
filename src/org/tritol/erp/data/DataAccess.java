@@ -108,7 +108,11 @@ public class DataAccess {
 					.prepareStatement("INSERT INTO _order (order_nr, supplier, order_date) VALUES (?, ?, ?)");
 			prep_statement.setString(1, order_nr);
 			prep_statement.setString(2, supplier);
-			prep_statement.setDate(3, Date.valueOf(order_date));
+			if (order_date != null) {
+				prep_statement.setDate(3, Date.valueOf(order_date));
+			} else {
+				prep_statement.setDate(3, Date.valueOf(LocalDate.now()));
+			}
 			prep_statement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -201,40 +205,40 @@ public class DataAccess {
 
 		try {
 			switch (filter) {
-			case 0:
+			case 0: // select all
 				prep_statement = connection.prepareStatement("SELECT * FROM _order");
 				break;
-			case 1:
+			case 1: // filter for order_nr
 				prep_statement = connection.prepareStatement("SELECT * FROM _order WHERE order_nr = ?");
 				prep_statement.setString(1, order_nr);
 				break;
-			case 2:
+			case 2: // filter for order_state
 				prep_statement = connection.prepareStatement("SELECT * FROM _order WHERE order_state = ?");
 				prep_statement.setString(1, order_state);
 				break;
-			case 3:
+			case 3: // filter for order_nr & order_state
 				prep_statement = connection
 						.prepareStatement("SELECT * FROM _order WHERE order_nr = ? AND order_state = ?");
 				prep_statement.setString(1, order_nr);
 				prep_statement.setString(2, order_state);
 				break;
-			case 4:
+			case 4: // filter for order_date
 				prep_statement = connection.prepareStatement("SELECT * FROM _order WHERE order_date = ?");
 				prep_statement.setDate(1, Date.valueOf(order_date));
 				break;
-			case 5:
+			case 5: // filter for order_nr & order_date
 				prep_statement = connection
 						.prepareStatement("SELECT * FROM _order WHERE order_nr = ? AND order_date = ?");
 				prep_statement.setString(1, order_nr);
 				prep_statement.setDate(2, Date.valueOf(order_date));
 				break;
-			case 6:
+			case 6: // filter for order_state & order_date
 				prep_statement = connection
 						.prepareStatement("SELECT * FROM _order WHERE order_state = ? AND order_date = ?");
 				prep_statement.setString(1, order_state);
 				prep_statement.setDate(2, Date.valueOf(order_date));
 				break;
-			case 7:
+			case 7: // filter for order_nr & order_state & order_date
 				prep_statement = connection.prepareStatement(
 						"SELECT * FROM _order WHERE order_nr = ? AND order_state = ? AND order_date = ?");
 				prep_statement.setString(1, order_nr);
@@ -436,11 +440,12 @@ public class DataAccess {
 		}
 	}
 
-	public void setArrivalDate(String order_nr, LocalDate arrival) {
+	public void setOrderDelivered(String order_nr, LocalDate arrival) {
 		PreparedStatement prep_statement;
 		if (connection != null) {
 			try {
-				prep_statement = connection.prepareStatement("UPDATE _order SET arrival_date = ? WHERE order_nr = ?");
+				prep_statement = connection
+						.prepareStatement("UPDATE _order SET arrival_date = ?, order_state = 'a' WHERE order_nr = ?");
 				prep_statement.setDate(1, Date.valueOf(arrival));
 				prep_statement.setString(2, order_nr);
 				prep_statement.execute();
