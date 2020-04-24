@@ -47,5 +47,7 @@ public abstract class AbstractPanel extends JPanel {
 		this.add(comp, gbc);
 
 	}
+	
+	protected abstract void init();
 
 }

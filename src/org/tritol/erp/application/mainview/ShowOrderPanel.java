@@ -31,12 +31,12 @@ public class ShowOrderPanel extends AbstractPanel {
 	private JTextField order_state_filter = new JTextField();
 	private JButton confirm_filter = new JButton("Filter");
 	private JTable order_show = new JTable(new ShowOrdersTableModel());
-
+	
 	public ShowOrderPanel() {
 		init();
 	}
 
-	private void init() {
+	protected void init() {
 		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
 		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
 		

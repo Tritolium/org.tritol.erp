@@ -9,3 +9,4 @@ database.ser
 database.ser
 >>>>>>> branch 'testing' of https://github.com/Tritolium/org.tritol.erp.git
 database.sqlite
+backup.sqlite

@@ -37,4 +37,8 @@ public abstract class AbstractArticlesTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return data[rowIndex][columnIndex];
 	}
+	
+	public void setData(Object[][] data) {
+		this.data = data;
+	}
 }

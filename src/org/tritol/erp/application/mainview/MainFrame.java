@@ -18,6 +18,7 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 5530344209795531961L;
 
 	public static final int MAINVIEW = 0;
+	public static final int SHOWSTOCK = 1;
 	public static final int SHOWORDER = 2;
 
 	private JMenuBar menuBar = new JMenuBar();
@@ -30,10 +31,14 @@ public class MainFrame extends JFrame {
 	private JMenuItem showOrderItem = new JMenuItem("Anzeigen");
 	private JMenuItem addSupplierItem = new JMenuItem("Lieferant anlegen");
 
+	private JMenu stockMenu = new JMenu("Lager");
+	private JMenuItem showStockItem = new JMenuItem("Anzeigen");
+
 	private AbstractPanel mainView = new MainPanel();
 
 	private AbstractPanel mainPanel = new MainPanel();
 	private ShowOrderPanel showOrderPanel = new ShowOrderPanel();
+	private ShowStockPanel showStockPanel = new ShowStockPanel();
 
 	public MainFrame() {
 		super("ERP");
@@ -56,6 +61,9 @@ public class MainFrame extends JFrame {
 		orderMenu.add(showOrderItem);
 		orderMenu.add(addSupplierItem);
 
+		menuBar.add(stockMenu);
+		stockMenu.add(showStockItem);
+
 		this.add(mainView, BorderLayout.CENTER);
 	}
 
@@ -75,6 +83,10 @@ public class MainFrame extends JFrame {
 		this.addSupplierItem.addActionListener(l);
 	}
 
+	public void setShowStockListener(ActionListener l) {
+		this.showStockItem.addActionListener(l);
+	}
+
 	public void setGetOrdersFilterListener(ActionListener l) {
 		this.showOrderPanel.setFilterListener(l);
 	}
@@ -88,6 +100,9 @@ public class MainFrame extends JFrame {
 		switch (panel) {
 		case MAINVIEW:
 			mainView = mainPanel;
+			break;
+		case SHOWSTOCK:
+			mainView = showStockPanel;
 			break;
 		case SHOWORDER:
 			mainView = showOrderPanel;
@@ -108,4 +123,7 @@ public class MainFrame extends JFrame {
 		return showOrderPanel;
 	}
 
+	public ShowStockPanel getShowStockView() {
+		return showStockPanel;
+	}
 }

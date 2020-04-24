@@ -374,6 +374,45 @@ public class DataAccess {
 		return results;
 	}
 
+	public Object[][] getStock() {
+		// ADD more filters
+
+		PreparedStatement prep_statement;
+		ResultSet res_set;
+
+		Object[][] results = null;
+
+		ArrayList<ArrayList<Object>> converter = new ArrayList<>();
+		ArrayList<Object> article;
+
+		try {
+			prep_statement = connection.prepareStatement("SELECT * FROM o_article");
+			
+			res_set = prep_statement.executeQuery();
+
+			while (res_set.next()) {
+				article = new ArrayList<Object>();
+				article.add(res_set.getString("pos_nr"));
+				article.add(res_set.getString("art_desc"));
+				article.add(res_set.getInt("quantity"));
+				article.add(res_set.getDouble("price"));
+				converter.add(article);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		results = new Object[converter.size()][converter.get(0).size()];
+
+		for (int i = 0; i < results.length; i++) {
+			for (int j = 0; j < results[0].length; j++) {
+				results[i][j] = converter.get(i).get(j);
+			}
+		}
+
+		return results;
+	}
+
 	/**
 	 * 
 	 * @param order_nr The order number

@@ -4,17 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
-import java.util.ArrayList;
-
 import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 
-import org.tritol.erp.application.dialog.*;
 import org.tritol.erp.application.mainview.MainFrame;
-import org.tritol.erp.controlling.dialog.AbstractDialogController;
-import org.tritol.erp.controlling.dialog.AddOrderController;
-import org.tritol.erp.controlling.dialog.AddSupplierController;
-import org.tritol.erp.controlling.dialog.EditOrderController;
+import org.tritol.erp.controlling.dialog.*;
 import org.tritol.erp.data.DataAccess;
 
 public class Controller {
@@ -27,10 +21,6 @@ public class Controller {
 	private DataAccess _model;
 	private Controller _controller;
 	
-	private ArrayList<AbstractDialogController> dialogControllerRegister = new ArrayList<AbstractDialogController>();
-
-	private boolean running = true;
-
 	public Controller() {
 		this._model = new DataAccess();
 		this._view = new MainFrame();
@@ -51,41 +41,13 @@ public class Controller {
 		this._view.setAddOrderListener(new AddOrderListener());
 		this._view.setShowOrderListener(new ShowOrderListener());
 		this._view.setAddSupplierListener(new AddSupplierListener());
+		
+		// top menu stock
+		this._view.setShowStockListener(new ShowStockListener());
 
 		// ShowOrderPanel
 		this._view.setGetOrdersFilterListener(new GetOrdersListener());
 		this._view.setEditOrdersListener(new ClickOrderTableListener());
-	}
-
-	/**
-	 * Adds an order to the model
-	 * 
-	 * @param order_nr   The order number
-	 * @param order_date The order date
-	 */
-	public void addOrder(String order_nr, String supplier, LocalDate order_date) {
-		_model.addOrder(order_nr, supplier, order_date);
-	}
-
-	/**
-	 * Adds an article to a given order
-	 * 
-	 * @param order_nr The order number
-	 * @param pos_nr   The position number of the article
-	 * @param art_desc The articles description
-	 * @param quantity The articles quantity
-	 * @param price    The articles price
-	 */
-	public void addToOrder(String order_nr, String pos_nr, String art_desc, int quantity, double price) {
-		_model.addToOrder(order_nr, pos_nr, art_desc, quantity, price);
-	}
-
-	public void addSupplier(String supplier_name, String street, String housenumber, String postcode, String city) {
-		_model.addSupplier(supplier_name, street, housenumber, postcode, city);
-	}
-
-	public boolean isRunning() {
-		return running;
 	}
 
 	/**
@@ -107,28 +69,6 @@ public class Controller {
 
 		orders = _model.getOrders(order_nr, order_state, order_date);
 		_view.getShowOrderView().setData(orders);
-	}
-
-	public void getOrderData(String order_nr, EditOrderDialog dialog) {
-		Object[] order_data = _model.getOrderData(order_nr);
-		dialog.setOrderData((LocalDate) order_data[0], (String) order_data[1]);
-		dialog.setArticles(_model.getArticles(order_nr));
-	}
-
-	public void addConsumption(int con_nr, LocalDate con_date, String usage) {
-		_model.addConsumption(con_nr, con_date, usage);
-	}
-
-	public void disconnect() {
-		_model.disconnect();
-	}
-	
-	public void registerController(AbstractDialogController dialogController) {
-		dialogControllerRegister.add(dialogController);
-	}
-	
-	public void unregisterController(AbstractDialogController dialogController) {
-		dialogControllerRegister.remove(dialogController);
 	}
 
 	/**
@@ -182,6 +122,16 @@ public class Controller {
 		}
 	}
 
+	class ShowStockListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_view.getShowStockView().setData(_model.getStock());
+			_view.setView(MainFrame.SHOWSTOCK);
+		}
+		
+	}
+	
 	/**
 	 * Loads orders from model to ShowOrder-View
 	 * 
