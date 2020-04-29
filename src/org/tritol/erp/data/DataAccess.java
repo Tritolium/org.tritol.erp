@@ -35,6 +35,8 @@ public class DataAccess {
 			if (!d_file.isFile()) {
 				d_file.createNewFile(); // create database file if there is none
 				init = true;
+			} else {
+				// TODO check if database is up to date
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -60,18 +62,27 @@ public class DataAccess {
 	private void initDatabase() {
 		try {
 			Statement statement = connection.createStatement();
+			//
 			statement.executeUpdate(
 					"CREATE TABLE supplier (supplier_name varchar(64), street varchar(64), housenumber varchar(5), postcode varchar(5), city varchar(64), primary key (supplier_name))");
 			statement.executeUpdate(
 					"CREATE TABLE _order(order_nr varchar(24), supplier varchar(64), order_date date, arrival_date date default null, order_state varchar(1) default 'o', primary key (order_nr), foreign key (supplier) references supplier (supplier_name))");
 			statement.executeUpdate(
+					"CREATE TABLE o_article(order_nr varchar(24), pos_nr varchar(24), art_desc varchar(256), quantity int, price real, foreign key (order_nr) references _order (order_nr))");
+			//
+			statement.executeUpdate(
 					"CREATE TABLE consumption(con_nr int, con_date date, usage varchar(256), primary key (con_nr))");
 			statement.executeUpdate(
-					"CREATE TABLE o_article(order_nr varchar(24), pos_nr varchar(24), art_desc varchar(256), quantity int, price real, foreign key (order_nr) references _order (order_nr))");
-			statement.executeUpdate(
 					"CREATE TABLE c_article (con_nr int, pos_nr varchar(24), art_desc varchar(256), quantity int, foreign key (con_nr) references consumption (con_nr))");
+			//
 			statement.executeUpdate(
 					"CREATE TABLE stock (pos_nr varchar(24), art_desc varchar(256), quantity int, price real, primary key (pos_nr))");
+			// TODO create tables tool & tool_history
+			statement.executeUpdate(
+					"CREATE TABLE tool (tool_id int NOT NULL AUTO_INCREMENT, tool_desc varchar(64), keywords varchar(256), availability char(1), primary key (tool_id)");
+			statement.executeUpdate(
+					"CREATE TABLE tool_history (tool_id int, from_date DATE, to_date DATE, desc varchar(256), state char(1), foreign key (tool_id) references tool (tool_id))");
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
