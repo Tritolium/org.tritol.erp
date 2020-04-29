@@ -95,6 +95,10 @@ public class MainFrame extends JFrame {
 		this.showOrderPanel.setEditOrdersListener(l);
 	}
 
+	public void setConfirmStockFilterListener(ActionListener l) {
+		this.showStockPanel.setConfirmFilterListener(l);
+	}
+
 	public void setView(int panel) {
 		this.remove(mainView);
 		switch (panel) {

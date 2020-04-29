@@ -374,8 +374,20 @@ public class DataAccess {
 		return results;
 	}
 
-	public Object[][] getStock() {
+	public Object[][] getStock(String pos_nr, String art_desc) {
 		// ADD more filters
+
+		int POSNR = 1;
+		int ARTDESC = 2;
+
+		int filter = 0;
+
+		if (!pos_nr.isBlank()) {
+			filter += POSNR;
+		}
+		if (!art_desc.isBlank()) {
+			filter += ARTDESC;
+		}
 
 		PreparedStatement prep_statement;
 		ResultSet res_set;
@@ -386,8 +398,27 @@ public class DataAccess {
 		ArrayList<Object> article;
 
 		try {
-			prep_statement = connection.prepareStatement("SELECT * FROM o_article");
-			
+			switch (filter) {
+			default:
+			case 0:
+				prep_statement = connection.prepareStatement("SELECT * FROM stock");
+				break;
+			case 1:
+				prep_statement = connection.prepareStatement("SELECT * FROM stock WHERE pos_nr = ?");
+				prep_statement.setString(1, pos_nr);
+				break;
+			case 2:
+				prep_statement = connection.prepareStatement("SELECT * FROM stock WHERE art_desc LIKE ?");
+				prep_statement.setString(1, "%" + art_desc + "%");
+				break;
+			case 3:
+				prep_statement = connection
+						.prepareStatement("SELECT * FROM stock WHERE pos_nr = ? AND art_desc LIKE ?");
+				prep_statement.setString(1, pos_nr);
+				prep_statement.setString(2, "%" + art_desc + "%");
+				break;
+			}
+
 			res_set = prep_statement.executeQuery();
 
 			while (res_set.next()) {
@@ -402,11 +433,13 @@ public class DataAccess {
 			e.printStackTrace();
 		}
 
-		results = new Object[converter.size()][converter.get(0).size()];
+		if (converter.size() > 0) {
+			results = new Object[converter.size()][converter.get(0).size()];
 
-		for (int i = 0; i < results.length; i++) {
-			for (int j = 0; j < results[0].length; j++) {
-				results[i][j] = converter.get(i).get(j);
+			for (int i = 0; i < results.length; i++) {
+				for (int j = 0; j < results[0].length; j++) {
+					results[i][j] = converter.get(i).get(j);
+				}
 			}
 		}
 

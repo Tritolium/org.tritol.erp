@@ -40,5 +40,6 @@ public abstract class AbstractArticlesTableModel extends AbstractTableModel {
 	
 	public void setData(Object[][] data) {
 		this.data = data;
+		this.fireTableDataChanged();
 	}
 }

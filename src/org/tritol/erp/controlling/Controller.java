@@ -15,12 +15,10 @@ public class Controller {
 
 	// ADD possibly add own controllers for views
 
-	// ADD button to safely close the program
-
 	private MainFrame _view;
 	private DataAccess _model;
 	private Controller _controller;
-	
+
 	public Controller() {
 		this._model = new DataAccess();
 		this._view = new MainFrame();
@@ -34,20 +32,23 @@ public class Controller {
 	}
 
 	private void addListener() {
-		//top menu ERP
+		// top menu ERP
 		this._view.setCloseERPListener(new CloseERPListener());
-		
+
 		// top menu distribution
 		this._view.setAddOrderListener(new AddOrderListener());
 		this._view.setShowOrderListener(new ShowOrderListener());
 		this._view.setAddSupplierListener(new AddSupplierListener());
-		
+
 		// top menu stock
 		this._view.setShowStockListener(new ShowStockListener());
 
 		// ShowOrderPanel
 		this._view.setGetOrdersFilterListener(new GetOrdersListener());
 		this._view.setEditOrdersListener(new ClickOrderTableListener());
+
+		// ShowStockPanel
+		this._view.setConfirmStockFilterListener(new GetStockListener());
 	}
 
 	/**
@@ -73,19 +74,20 @@ public class Controller {
 
 	/**
 	 * Closes the program
+	 * 
 	 * @author Dominik
 	 *
 	 */
-	class CloseERPListener implements ActionListener{
+	class CloseERPListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			_view.dispose();
 			_model.disconnect();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Starts controller for order input dialog
 	 * 
@@ -122,16 +124,16 @@ public class Controller {
 		}
 	}
 
-	class ShowStockListener implements ActionListener{
+	class ShowStockListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_view.getShowStockView().setData(_model.getStock());
+			_view.getShowStockView().setData(_model.getStock("", ""));
 			_view.setView(MainFrame.SHOWSTOCK);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Loads orders from model to ShowOrder-View
 	 * 
@@ -191,6 +193,19 @@ public class Controller {
 		@Override
 		public void mouseMoved(MouseEvent e) {
 		}
+	}
+
+	class GetStockListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO filter stock for given filters
+			String pos_nr, art_desc;
+			pos_nr = _view.getShowStockView().getPosNr();
+			art_desc = _view.getShowStockView().getArtDesc();
+			_view.getShowStockView().setData(_model.getStock(pos_nr, art_desc));
+		}
+
 	}
 
 }
